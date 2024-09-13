@@ -1,5 +1,5 @@
 // Import the functions from device-utils.js
-import { getConnectedDevices, updateCameraList } from './device-utils.js';
+import { getConnectedDevices, updateCameraList, openCameraWithConstraints, adjustTrackConstraints, captureScreen, toggleTrack } from './device-utils.js';
 
 // Function to start playing the video from the selected camera
 async function playVideoFromCamera(cameraId) {
@@ -32,3 +32,20 @@ navigator.mediaDevices.addEventListener('devicechange', async () => {
     const newCameraList = await getConnectedDevices('videoinput');
     updateCameraList(newCameraList);
 });
+
+// Uso para abrir câmera com restrições de resolução exata
+const exactResolutionConstraints = {
+    video: {
+        width: { exact: 1024 },
+        height: { exact: 768 }
+    }
+};
+
+openCameraWithConstraints(exactResolutionConstraints)
+    .then(stream => {
+        const videoElement = document.querySelector('video#localVideo');
+        videoElement.srcObject = stream;
+    })
+    .catch(error => {
+        console.error('Falha ao abrir a câmera com a resolução exata.', error);
+    });
